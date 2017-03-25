@@ -1,0 +1,8 @@
+---
+
+- name: restart nginx service
+  service: name=nginx state=started
+
+- name: save iptables
+  command: /sbin/iptables-save
+   

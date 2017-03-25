@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  tasks:
+
+- name: Installing Web Stack on Ubuntu Machines
+  hosts: ubuntu
+  become: yes
+  become_method: sudo
+  tasks:
+
+  roles:
+    - web
+
+- name: Installing Web Stack on CentOS Machines
+  hosts: centos
+  become: yes
+  become_method: sudo
+  tasks:
+
+
+  roles:
+    - web

@@ -1,0 +1,36 @@
+---
+
+- name: Installing Nginx on Ubuntu OS
+  apt:
+   name: nginx
+   state: present
+   update_cache: yes
+  when: (ansible_distribution == "Ubuntu" and  ansible_distribution_version >= "15")
+
+- name: Installing Nginx on CentOS/Redhat
+  yum:
+   name: "{{ item }}"
+   state: present
+  with_items:
+    - epel-release
+    - nginx.x86_64
+  when: (ansible_distribution == "CentOS" and ansible_distribution_version >= "7")  
+ 
+- name: Copy Nginx index file
+  copy: src=roles/web/files/index.html dest=/usr/share/nginx/html
+  notify: restart nginx service
+
+- name: Add Nginx in Allow list
+  ufw: 
+   rule: allow
+   name: Nginx HTTP
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_version >= "15")
+
+- name: Add Nginx in Iptables list
+  iptables:
+    chain: INPUT
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+  become: yes
+  notify: save iptables
+  when: (ansible_distribution == "CentOS" and ansible_distribution_version >= "7")
